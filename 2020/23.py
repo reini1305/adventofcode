@@ -2,10 +2,6 @@ import pytest
 from typing import List
 from aoc import day
 from numba import jit
-from numba.errors import NumbaPendingDeprecationWarning
-import warnings
-
-warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
 @jit(nopython=True)
 def simulate_n_rounds(input:List[int], n:int, largest:int):
