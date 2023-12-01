@@ -2,10 +2,12 @@ import pytest
 from typing import List
 from aoc import day, get_input
 
-def getdigits(input: str)->str:
+
+def getdigits(input: str) -> str:
     return ''.join([i if i.isdigit() else '' for i in input])
 
-def part1(input: List[str])-> int:
+
+def part1(input: List[str]) -> int:
     result = 0
     for line in input:
         digits = getdigits(line)
@@ -13,7 +15,8 @@ def part1(input: List[str])-> int:
     print(f'Day {day()}, Part 1: {result}')
     return result
 
-def replacewrittendigits(input: str)->str:
+
+def replacewrittendigits(input: str) -> str:
     numbers = {
         "oneight": "18",
         "twone": "21",
@@ -34,10 +37,11 @@ def replacewrittendigits(input: str)->str:
     }
     for number in numbers:
         input = input.replace(number, numbers[number])
-    
+
     return input
 
-def part2(input: List[str])-> None:
+
+def part2(input: List[str]) -> int:
     result = 0
     for line in input:
         digits = getdigits(replacewrittendigits(line))
@@ -45,10 +49,12 @@ def part2(input: List[str])-> None:
     print(f'Day {day()}, Part 2: {result}')
     return result
 
+
 if __name__ == "__main__":
     input = get_input()
     part1(input)
     part2(input)
+
 
 @pytest.fixture
 def puzzle_input():
@@ -66,12 +72,14 @@ def puzzle_input():
         '7pqrstsixteen',
     ]
 
+
 def test_day1_part1(puzzle_input):
     assert getdigits(puzzle_input[0]) == '12'
     assert getdigits(puzzle_input[1]) == '38'
     assert getdigits(puzzle_input[2]) == '12345'
     assert getdigits(puzzle_input[3]) == '7'
     assert part1(puzzle_input[:4]) == 142
+
 
 def test_day1_part2(puzzle_input):
     assert replacewrittendigits(puzzle_input[4]) == '219'

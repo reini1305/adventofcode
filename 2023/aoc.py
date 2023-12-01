@@ -1,6 +1,7 @@
 import sys
-import os 
+import os
 from typing import List
+
 
 def day() -> str:
     filename = os.path.basename(sys.argv[0])
@@ -9,7 +10,7 @@ def day() -> str:
 
 def get_input() -> List[str]:
     filename = f"input{day()}.txt"
-    with open(filename,'r') as fp:
+    with open(filename, 'r') as fp:
         input = [line.strip('\n') for line in fp.readlines()]
     return input
 
