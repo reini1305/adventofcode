@@ -37,6 +37,8 @@ def get_adjacent_gears(grid: List[List[str]], coordinates: List[Tuple[int, int]]
     for cx, cy in coordinates:
         for nx, ny in neighbors:
             try:
+                if (cx + nx) < 0 or (cy + ny) < 0:
+                    continue
                 if grid[cx + nx][cy + ny] == '*':
                     gears.add((cx + nx, cy + ny))
             except IndexError:
@@ -46,10 +48,12 @@ def get_adjacent_gears(grid: List[List[str]], coordinates: List[Tuple[int, int]]
 
 def is_adjacent(grid: List[List[str]], coordinates: List[Tuple[int, int]]) -> bool:
     neighbors = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
-    
+
     for cx, cy in coordinates:
         for nx, ny in neighbors:
             try:
+                if (cx + nx) < 0 or (cy + ny) < 0:
+                    continue
                 if grid[cx + nx][cy + ny] in '+-*/@$#=%&':
                     return True
             except IndexError:
@@ -110,3 +114,22 @@ def test_day3_part2(puzzle_input):
     assert get_adjacent_gears(parse_grid(puzzle_input), [(0, 2)]) == [(1, 3)]
     assert get_adjacent_gears(parse_grid(puzzle_input), [(2, 2)]) == [(1, 3)]
     assert part2(puzzle_input) == 467835
+
+
+def test_day3_bonus():
+    input = [
+        '12.......*..',
+        '+.........34',
+        '.......-12..',
+        '..78........',
+        '..*....60...',
+        '78.........9',
+        '.5.....23..$',
+        '8...90*12...',
+        '............',
+        '2.2......12.',
+        '.*.........*',
+        '1.1..503+.56',
+    ]
+    assert part1(input) == 925
+    assert part2(input) == 6756
