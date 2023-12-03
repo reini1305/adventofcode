@@ -1,6 +1,5 @@
 import pytest
 from typing import List, Tuple
-from tqdm import tqdm
 from aoc import day, get_input
 
 
@@ -34,18 +33,19 @@ def get_seeds(input: List[str]) -> List[int]:
     return []
 
 
-def traverse_mappings(start: int, mappings: List[List[Tuple[int, int, int]]]) -> int:
+def traverse_mappings(start: int, skip: int, mappings: List[List[Tuple[int, int, int]]]) -> Tuple[int, int]:
     source = start
     dest = source
     for mapping in mappings:
         for (ds, ss, le) in mapping:
             if source >= ss and source < ss + le:
+                skip = max(min(skip, ss + le - dest), 1)
                 dest = ds + (source - ss)
                 break
         else:
             dest = source
         source = dest
-    return dest
+    return dest, skip
 
 
 def part1(input: List[str]) -> int:
@@ -53,7 +53,7 @@ def part1(input: List[str]) -> int:
     seeds = get_seeds(input)
     mappings = get_mappings(input)
     for seed in seeds:
-        result = min(result, traverse_mappings(seed, mappings))
+        result = min(result, traverse_mappings(seed, 1, mappings)[0])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
@@ -62,9 +62,13 @@ def part2(input: List[str]) -> int:
     result = 1000000000
     seeds = get_seeds(input)
     mappings = get_mappings(input)
-    for s in tqdm(range(0, len(seeds), 2)):
-        for seed in range(seeds[s], seeds[s] + seeds[s + 1]):
-            result = min(result, traverse_mappings(seed, mappings))
+    for s in range(0, len(seeds), 2):
+        seed = seeds[s]
+        while seed <= seeds[s] + seeds[s + 1]:
+            r, skip = traverse_mappings(seed, seeds[s + 1], mappings)
+            result = min(result, r)
+            seed += skip
+            skip = seeds[s + 1] - seed + seeds[s]
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -72,7 +76,7 @@ def part2(input: List[str]) -> int:
 if __name__ == "__main__":
     input = get_input()
     part1(input)
-    # part2(input)
+    part2(input)
 
 
 @pytest.fixture
@@ -118,10 +122,10 @@ def test_day5_part1(puzzle_input):
     seeds = get_seeds(puzzle_input)
     assert seeds == [79, 14, 55, 13]
     mappings = get_mappings(puzzle_input)
-    assert traverse_mappings(seeds[0], mappings) == 82
-    assert traverse_mappings(seeds[1], mappings) == 43
-    assert traverse_mappings(seeds[2], mappings) == 86
-    assert traverse_mappings(seeds[3], mappings) == 35
+    assert traverse_mappings(seeds[0], 1, mappings)[0] == 82
+    assert traverse_mappings(seeds[1], 1, mappings)[0] == 43
+    assert traverse_mappings(seeds[2], 1, mappings)[0] == 86
+    assert traverse_mappings(seeds[3], 1, mappings)[0] == 35
     assert part1(puzzle_input) == 35
 
 
