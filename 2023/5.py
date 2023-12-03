@@ -1,28 +1,41 @@
 import pytest
-from typing import Dict, List
+from typing import List, Tuple
 from aoc import day, get_input
 
 
-def get_mappings(input: List[str]) -> List[Dict[int, int]]:
-    mappings: List[Dict[int, int]] = []
-    curr_dict = {}
+def get_mappings(input: List[str]) -> List[List[Tuple[int, int, int]]]:
+    mappings: List[List[Tuple[int, int, int]]] = []
+    curr_mapping: List[Tuple[int, int, int]] = []
     for line in input:
         if line.startswith('seeds:'):
-            _, seed_str = line.split(': ')
-            curr_dict = {int(x): int(x) for x in seed_str.split()}
+            # _, seed_str = line.split(': ')
+            # curr_dict = {int(x): int(x) for x in seed_str.split()}
+            continue
         elif line == '':
-            mappings.append(curr_dict)
-            curr_dict = {}
+            if curr_mapping:
+                mappings.append(curr_mapping)
+            curr_mapping = []
         elif line[0].isdigit():
             source_start, dest_start, length = line.split()
             ss = int(source_start)
             ds = int(dest_start)
             le = int(length)
-            for s, d in zip(range(ss, ss + le), range(ds, ds + le)):
-                curr_dict[s] = d
+            curr_mapping.append((ss, ds, le))
         else:
             continue  # Description
-    return mappings        
+    return mappings
+
+
+def get_seeds(input: List[str]) -> List[int]:
+    for line in input:
+        if line.startswith('seeds:'):
+            _, seed_str = line.split(': ')
+            return [int(x) for x in seed_str.split()]
+    return []
+
+
+def traverse_mappings(start: int, mappings: List[List[Tuple[int, int, int]]]) -> int:
+    return 0
 
 
 def part1(input: List[str]) -> int:
@@ -83,7 +96,10 @@ def puzzle_input():
 
 
 def test_day5_part1(puzzle_input):
-    get_mappings(puzzle_input)
+    seeds = get_seeds(puzzle_input)
+    assert seeds == [79, 14, 55, 13]
+    mappings = get_mappings(puzzle_input)
+    assert traverse_mappings(seeds[0], mappings) == 82
 
 
 def test_day5_part2(puzzle_input):
