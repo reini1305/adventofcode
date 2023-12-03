@@ -72,7 +72,7 @@ def part2(input: List[str]) -> int:
 if __name__ == "__main__":
     input = get_input()
     part1(input)
-    part2(input)
+    # part2(input)
 
 
 @pytest.fixture
