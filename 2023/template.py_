@@ -3,14 +3,16 @@ from typing import List
 from aoc import day, get_input
 
 
-def part1(input: List[str]) -> None:
+def part1(input: List[str]) -> int:
     result = 0
     print(f'Day {day()}, Part 1: {result}')
+    return result
 
 
-def part2(input: List[str]) -> None:
+def part2(input: List[str]) -> int:
     result = 0
     print(f'Day {day()}, Part 2: {result}')
+    return result
 
 
 if __name__ == "__main__":
