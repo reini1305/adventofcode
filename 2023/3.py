@@ -102,11 +102,11 @@ def puzzle_input():
 
 
 def test_day3_part1(puzzle_input):
-    assert get_numbers(parse_grid(puzzle_input)) == [467,35,633,617,592,755,664,598]
+    assert [n for n, _ in get_numbers(parse_grid(puzzle_input))] == [467, 35, 633, 617, 592, 755, 664, 598]
     assert part1(puzzle_input) == 4361
 
 
 def test_day3_part2(puzzle_input):
-    assert get_adjacent_gears(parse_grid(puzzle_input), [(0,2)]) == [(1,3)]
-    assert get_adjacent_gears(parse_grid(puzzle_input), [(2,2)]) == [(1,3)]
+    assert get_adjacent_gears(parse_grid(puzzle_input), [(0, 2)]) == [(1, 3)]
+    assert get_adjacent_gears(parse_grid(puzzle_input), [(2, 2)]) == [(1, 3)]
     assert part2(puzzle_input) == 467835
