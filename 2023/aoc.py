@@ -9,7 +9,7 @@ def day() -> str:
 
 
 def get_input() -> List[str]:
-    filename = f"input{day()}.txt"
+    filename = f"{os.path.dirname(__file__)}/input{day()}.txt"
     with open(filename, 'r') as fp:
         input = [line.strip('\n') for line in fp.readlines()]
     return input
