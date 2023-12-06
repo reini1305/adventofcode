@@ -5,8 +5,8 @@ from aoc import day
 
 
 def count_ways_to_win(time: int, distance: int) -> int:
-    start = ceil((time - sqrt(time ** 2 - 4 * distance)) / 2)
-    end = floor((time + sqrt(time ** 2 - 4 * distance)) / 2)
+    start = ceil((time - sqrt(time ** 2 - 4 * distance)) / 2 + 1e-6)
+    end = floor((time + sqrt(time ** 2 - 4 * distance)) / 2 - 1e-6)
     return end - start + 1
 
 
