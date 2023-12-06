@@ -1,11 +1,13 @@
+from math import ceil, floor, sqrt
 import pytest
 from typing import List, Tuple
 from aoc import day
 
 
 def count_ways_to_win(time: int, distance: int) -> int:
-    distances = [(time - t) * t for t in range(time + 1)]
-    return sum([d > distance for d in distances])
+    start = ceil((time - sqrt(time ** 2 - 4 * distance)) / 2)
+    end = floor((time + sqrt(time ** 2 - 4 * distance)) / 2)
+    return end - start + 1
 
 
 def part1(input: List[Tuple[int, int]]) -> int:
