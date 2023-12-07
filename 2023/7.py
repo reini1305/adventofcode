@@ -1,4 +1,5 @@
 from collections import Counter
+from functools import cmp_to_key
 import pytest
 from typing import List, Tuple
 from aoc import day, get_input
@@ -49,7 +50,8 @@ def compare_cards(cards1: Tuple[str, int, int], cards2: Tuple[str, int, int]) ->
 
 
 def part1(input: List[str]) -> int:
-    result = 0
+    sorted_cards = sorted(parse_input(input), key=cmp_to_key(compare_cards))
+    result = sum([i * s[1] for i, s in enumerate(sorted_cards, 1)])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
@@ -85,6 +87,7 @@ def test_day7_part1(puzzle_input):
     assert get_cards_type(cards[3][0]) == 2
     assert get_cards_type(cards[4][0]) == 3
     assert compare_cards(cards[2], cards[3]) == 1
+    assert part1(puzzle_input) == 6440
 
 
 def test_day7_part2(puzzle_input):
