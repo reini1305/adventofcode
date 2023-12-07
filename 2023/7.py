@@ -5,40 +5,45 @@ from typing import List, Tuple
 from aoc import day, get_input
 
 
-def parse_input(input: List[str]) -> List[Tuple[str, int, int]]:
+def parse_input(input: List[str], part1=True) -> List[Tuple[str, int, int]]:
     result = []
     for line in input:
         cards, value = line.split()
-        result.append((cards, int(value), get_cards_type(cards)))
+        result.append((cards, int(value), get_cards_type(cards, part1)))
     return result
 
 
-def get_cards_type(cards: str) -> int:
-    counts = list(Counter(cards).values())
-    # Five of a kind
-    if counts == [5]:
-        return 6
-    if 4 in counts:
-        return 5
-    if 3 in counts and 2 in counts:
-        return 4
-    if 3 in counts:
-        return 3
-    if counts.count(2) == 2:
-        return 2
-    if 2 in counts:
-        return 1
+def get_cards_type(cards: str, part1=True) -> int:
+    card_counts = Counter(cards)
+    acm = max(card_counts.values())
+    part2 = not part1 and 'J' in cards
+    match acm:
+        case 5:
+            return 6
+        case 4:
+            return 6 if part2 else 5
+        case 1:
+            return 1 if part2 else 0
+        case 3:
+            if len(card_counts.values()) == 2:
+                return 6 if part2 else 4
+            return 5 if part2 else 3
+        case 2:
+            if len(card_counts.values()) == 3:
+                return 3 + card_counts['J'] if part2 else 2
+            return 3 if part2 else 1
     return 0
 
 
-def compare_cards(cards1: Tuple[str, int, int], cards2: Tuple[str, int, int]) -> int:
+def compare_cards(cards1: Tuple[str, int, int], cards2: Tuple[str, int, int], part1=True) -> int:
     c1_str, _, val1 = cards1
     c2_str, _, val2 = cards2
     if val1 < val2:
         return -1
     if val1 > val2:
         return 1
-    card_strength = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
+    card_strength = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'] if part1 else\
+        ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J']
     for c1, c2 in zip(c1_str, c2_str):
         s1 = card_strength.index(c1)
         s2 = card_strength.index(c2)
@@ -50,14 +55,15 @@ def compare_cards(cards1: Tuple[str, int, int], cards2: Tuple[str, int, int]) ->
 
 
 def part1(input: List[str]) -> int:
-    sorted_cards = sorted(parse_input(input), key=cmp_to_key(compare_cards))
+    sorted_cards = sorted(parse_input(input, True), key=cmp_to_key(lambda a, b: compare_cards(a, b, True)))
     result = sum([i * s[1] for i, s in enumerate(sorted_cards, 1)])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
 
 def part2(input: List[str]) -> int:
-    result = 0
+    sorted_cards = sorted(parse_input(input, False), key=cmp_to_key(lambda a, b: compare_cards(a, b, False)))
+    result = sum([i * s[1] for i, s in enumerate(sorted_cards, 1)])
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -91,4 +97,10 @@ def test_day7_part1(puzzle_input):
 
 
 def test_day7_part2(puzzle_input):
-    assert 1
+    cards = parse_input(puzzle_input)
+    assert get_cards_type(cards[0][0], False) == 1
+    assert get_cards_type(cards[1][0], False) == 5
+    assert get_cards_type(cards[2][0], False) == 2
+    assert get_cards_type(cards[3][0], False) == 5
+    assert get_cards_type(cards[4][0], False) == 5
+    assert part2(puzzle_input) == 5905
