@@ -1,7 +1,7 @@
 from collections import deque
 import pytest
 from typing import Deque, List, Set, Tuple
-from aoc import day, get_input
+from aoc import day, get_input, tuple_add
 
 
 def get_grid(input: List[str]) -> List[List[str]]:
@@ -11,10 +11,6 @@ def get_grid(input: List[str]) -> List[List[str]]:
         output.append(['.'] + [char for char in line] + ['.'])
     output.append(['.'] * (len(input[0]) + 2))
     return output
-
-
-def tuple_add(a, b):
-    return (a[0] + b[0], a[1] + b[1])
 
 
 def get_loop(grid: List[List[str]]) -> Tuple[Set[Tuple[int, int]], str, Tuple[int, int]]:

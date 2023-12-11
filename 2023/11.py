@@ -2,7 +2,7 @@ from itertools import combinations
 import pytest
 import re
 from typing import List, Tuple
-from aoc import day, get_input
+from aoc import day, get_input, tuple_add
 
 
 def get_galaxies(input: List[str]) -> List[Tuple[int, int]]:
@@ -13,10 +13,6 @@ def get_galaxies(input: List[str]) -> List[Tuple[int, int]]:
     return galaxies
 
 
-def tuple_add(a, b):
-    return (a[0] + b[0], a[1] + b[1])
-
-
 def expand_universe(galaxies: List[Tuple[int, int]], expansion=2) -> List[Tuple[int, int]]:
     # Get size of universe
     Nx = 0
@@ -25,7 +21,7 @@ def expand_universe(galaxies: List[Tuple[int, int]], expansion=2) -> List[Tuple[
         Nx = max(Nx, g[0])
         Ny = max(Ny, g[1])
     # Find empty rows / cols
-    empty_rows = []
+    empty_rows: List[int] = []
     for y in range(Ny):
         is_empty = True
         for g in galaxies:
@@ -34,7 +30,7 @@ def expand_universe(galaxies: List[Tuple[int, int]], expansion=2) -> List[Tuple[
                 break
         if is_empty:
             empty_rows.append(y + len(empty_rows) * (expansion - 1))
-    empty_cols = []
+    empty_cols: List[int] = []
     for x in range(Nx):
         is_empty = True
         for g in galaxies:
@@ -108,3 +104,5 @@ def test_day11_part1(puzzle_input):
 def test_day11_part2(puzzle_input):
     galaxies = expand_universe(get_galaxies(puzzle_input), 10)
     assert sum([get_distance(galaxies, a, b) for a, b in combinations(range(len(galaxies)), 2)]) == 1030
+    galaxies = expand_universe(get_galaxies(puzzle_input), 100)
+    assert sum([get_distance(galaxies, a, b) for a, b in combinations(range(len(galaxies)), 2)]) == 8410

@@ -1,6 +1,6 @@
 import sys
 import os
-from typing import List
+from typing import List, Tuple
 
 
 def day() -> str:
@@ -17,3 +17,7 @@ def get_input() -> List[str]:
 
 def get_num_input() -> List[int]:
     return [int(i) for i in get_input()]
+
+
+def tuple_add(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
+    return (a[0] + b[0], a[1] + b[1])
