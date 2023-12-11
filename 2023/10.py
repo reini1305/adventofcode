@@ -70,7 +70,7 @@ def get_loop(grid: List[List[str]]) -> Tuple[Set[Tuple[int, int]], str, Tuple[in
     return loop, start_value, (x, y - 1)
 
 
-def count_inside(grid: list[list[str]], loop: set) -> int:
+def count_inside(grid: List[List[str]], loop: Set[Tuple[int, int]]) -> int:
     Nr, Nc = len(grid), len(grid[0])
     inside = False
     corner = ""
