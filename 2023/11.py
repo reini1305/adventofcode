@@ -17,28 +17,20 @@ def expand_universe(galaxies: List[Tuple[int, int]], expansion=2) -> List[Tuple[
     # Get size of universe
     Nx = 0
     Ny = 0
+    rows = set()
+    cols = set()
     for g in galaxies:
         Nx = max(Nx, g[0])
         Ny = max(Ny, g[1])
+        rows.add(g[1])
+        cols.add(g[0])
     # Find empty rows / cols
-    empty_rows: List[int] = []
-    for y in range(Ny):
-        is_empty = True
-        for g in galaxies:
-            if g[1] == y:
-                is_empty = False
-                break
-        if is_empty:
-            empty_rows.append(y + len(empty_rows) * (expansion - 1))
-    empty_cols: List[int] = []
-    for x in range(Nx):
-        is_empty = True
-        for g in galaxies:
-            if g[0] == x:
-                is_empty = False
-                break
-        if is_empty:
-            empty_cols.append(x + len(empty_cols) * (expansion - 1))
+    empty_cols = sorted(list(set(range(Nx)) - cols))
+    empty_rows = sorted(list(set(range(Ny)) - rows))
+    for i, c in enumerate(empty_cols):
+        empty_cols[i] = (expansion - 1) * i + c
+    for i, r in enumerate(empty_rows):
+        empty_rows[i] = (expansion - 1) * i + r
     # Expand
     for r in empty_rows:
         for i in range(len(galaxies)):
