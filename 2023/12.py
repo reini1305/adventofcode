@@ -29,15 +29,14 @@ def check_sum(springs: List[str], checksum: List[int]) -> bool:
 
 def expand(springs: List[str]) -> List[List[str]]:
     num_wildcards = springs.count('?')
-
-    output = []
+    springs_string = ''.join(springs)
+    matches = [m.start() for m in re.finditer(r'\?', springs_string)]
     for state in range(2**num_wildcards):
         output_springs = deepcopy(springs)
         sb = format(state, f'0{num_wildcards}b')
-        for i, m in enumerate(re.finditer(r'\?', ''.join(springs))):
-            output_springs[m.start()] = '#' if sb[i] == '1' else '.'
-        output.append(output_springs)
-    return output
+        for i, m in enumerate(matches):
+            output_springs[m] = '#' if sb[i] == '1' else '.'
+        yield output_springs
 
 
 def parse_input(input: List[str]) -> List[Tuple[List[str], List[int]]]:
