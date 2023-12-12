@@ -5,11 +5,11 @@ from typing import List, Tuple
 from aoc import day, get_input
 
 
-def check_sum(springs: str, checksum: List[int]) -> bool:
+def check_sum(springs: List[str], checksum: List[int]) -> bool:
     state = (springs[0] == '#')
     curr_count = 0
     checksum_id = 0
-    for s in springs:
+    for s in springs + ['.']:
         if s == '#':
             if state:
                 curr_count += 1
@@ -18,11 +18,13 @@ def check_sum(springs: str, checksum: List[int]) -> bool:
                 state = True
         elif s == '.':
             if state:
+                if checksum_id >= len(checksum):
+                    return False
                 if curr_count != checksum[checksum_id]:
                     return False
                 state = False
                 checksum_id += 1
-    return curr_count == checksum[checksum_id]
+    return checksum_id >= len(checksum)
 
 
 def expand(springs: List[str]) -> List[List[str]]:
@@ -49,6 +51,9 @@ def parse_input(input: List[str]) -> List[Tuple[List[str], List[int]]]:
 
 def part1(input: List[str]) -> int:
     result = 0
+    parsed_input = parse_input(input)
+    for springs, checksum in parsed_input:
+        result += sum([check_sum(e, checksum) for e in expand(springs)])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
@@ -78,10 +83,14 @@ def puzzle_input():
 
 
 def test_day12_part1(puzzle_input):
-    assert check_sum('#.#.###', [1, 1, 3])
     parsed_input = parse_input(puzzle_input)
-    expanded = expand(parsed_input[0][0])
-    assert sum([check_sum(e, parsed_input[0][1]) for e in expanded]) == 1
+    assert sum([check_sum(e, parsed_input[0][1]) for e in expand(parsed_input[0][0])]) == 1
+    assert sum([check_sum(e, parsed_input[1][1]) for e in expand(parsed_input[1][0])]) == 4
+    assert sum([check_sum(e, parsed_input[2][1]) for e in expand(parsed_input[2][0])]) == 1
+    assert sum([check_sum(e, parsed_input[3][1]) for e in expand(parsed_input[3][0])]) == 1
+    assert sum([check_sum(e, parsed_input[4][1]) for e in expand(parsed_input[4][0])]) == 4
+    assert sum([check_sum(e, parsed_input[5][1]) for e in expand(parsed_input[5][0])]) == 10
+    assert part1(puzzle_input) == 21
 
 
 def test_day12_part2(puzzle_input):
