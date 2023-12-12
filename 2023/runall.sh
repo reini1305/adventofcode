@@ -1,5 +1,5 @@
 #!/bin/bash
 for filename in *.py; do
-	pypy3 $filename & 
+	python3 $filename & 
 done
 wait

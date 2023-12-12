@@ -1,64 +1,66 @@
-from copy import deepcopy
-import re
 import pytest
 from typing import List, Tuple
 from aoc import day, get_input
-
-
-def check_sum(springs: List[str], checksum: List[int]) -> bool:
-    state = (springs[0] == '#')
-    curr_count = 0
-    checksum_id = 0
-    for s in springs + ['.']:
-        if s == '#':
-            if state:
-                curr_count += 1
-            else:
-                curr_count = 1
-                state = True
-        elif s == '.':
-            if state:
-                if checksum_id >= len(checksum):
-                    return False
-                if curr_count != checksum[checksum_id]:
-                    return False
-                state = False
-                checksum_id += 1
-    return checksum_id >= len(checksum)
-
-
-def expand(springs: List[str]) -> List[List[str]]:
-    num_wildcards = springs.count('?')
-    springs_string = ''.join(springs)
-    matches = [m.start() for m in re.finditer(r'\?', springs_string)]
-    for state in range(2**num_wildcards):
-        output_springs = deepcopy(springs)
-        sb = format(state, f'0{num_wildcards}b')
-        for i, m in enumerate(matches):
-            output_springs[m] = '#' if sb[i] == '1' else '.'
-        yield output_springs
+import functools
 
 
 def parse_input(input: List[str]) -> List[Tuple[List[str], List[int]]]:
     output = []
+    to_int = {'.': 0, '#': 1, '?': 2}
     for line in input:
         spring, checksum = line.split(' ')
         checksum_list = [int(i) for i in checksum.split(',')]
-        output.append((list(spring), checksum_list))
+        output.append(([to_int[i] for i in spring], checksum_list))
     return output
+
+
+@functools.cache  # 1000x+ speedup
+def arrangements(config, group):
+
+    # Base cases
+    if (len(group) == 0):
+        a = int(sum(c == 1 for c in config) == 0)
+        return a
+    if sum(group) > len(config):
+        return 0
+
+    # One case for .
+    if config[0] == 0:
+        a = arrangements(config[1:], group)
+        return a
+
+    no1, no2 = 0, 0
+    # possibility to start next tile
+    if config[0] == 2:
+        no2 = arrangements(config[1:], group)
+
+    # possibility to start here
+    if all(c != 0 for c in config[:group[0]]) and (config[group[0]] if len(config) > group[0] else 0) != 1:
+        no1 = arrangements(config[(group[0] + 1):], group[1:])
+
+    return no1 + no2
 
 
 def part1(input: List[str]) -> int:
     result = 0
     parsed_input = parse_input(input)
     for springs, checksum in parsed_input:
-        result += sum([check_sum(e, checksum) for e in expand(springs)])
+        arr = arrangements(tuple(springs), tuple(checksum))
+        result += arr
     print(f'Day {day()}, Part 1: {result}')
     return result
 
 
 def part2(input: List[str]) -> int:
     result = 0
+    parsed_input = parse_input(input)
+    for springs, checksum in parsed_input:
+
+        springs = ((springs + [2]) * 5)[:-1]
+        checksum *= 5
+
+        arr = arrangements(tuple(springs), tuple(checksum))
+        result += arr
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -83,14 +85,14 @@ def puzzle_input():
 
 def test_day12_part1(puzzle_input):
     parsed_input = parse_input(puzzle_input)
-    assert sum([check_sum(e, parsed_input[0][1]) for e in expand(parsed_input[0][0])]) == 1
-    assert sum([check_sum(e, parsed_input[1][1]) for e in expand(parsed_input[1][0])]) == 4
-    assert sum([check_sum(e, parsed_input[2][1]) for e in expand(parsed_input[2][0])]) == 1
-    assert sum([check_sum(e, parsed_input[3][1]) for e in expand(parsed_input[3][0])]) == 1
-    assert sum([check_sum(e, parsed_input[4][1]) for e in expand(parsed_input[4][0])]) == 4
-    assert sum([check_sum(e, parsed_input[5][1]) for e in expand(parsed_input[5][0])]) == 10
+    assert arrangements(tuple(parsed_input[0][0]), tuple(parsed_input[0][1])) == 1
+    assert arrangements(tuple(parsed_input[1][0]), tuple(parsed_input[1][1])) == 4
+    assert arrangements(tuple(parsed_input[2][0]), tuple(parsed_input[2][1])) == 1
+    assert arrangements(tuple(parsed_input[3][0]), tuple(parsed_input[3][1])) == 1
+    assert arrangements(tuple(parsed_input[4][0]), tuple(parsed_input[4][1])) == 4
+    assert arrangements(tuple(parsed_input[5][0]), tuple(parsed_input[5][1])) == 10
     assert part1(puzzle_input) == 21
 
 
 def test_day12_part2(puzzle_input):
-    assert 1
+    assert part2(puzzle_input) == 525152
