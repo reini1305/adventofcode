@@ -18,7 +18,7 @@ def get_patterns(input: List[str]) -> List[np.array]:
     return output
 
 
-def get_reflections(matrix: np.array) -> Tuple[int, int]:
+def get_reflections(matrix: np.array, to_ignore=(0, 0)) -> Tuple[int, int]:
     for col in range(matrix.shape[1] - 1):
         c = col
         reflection = True
@@ -30,7 +30,8 @@ def get_reflections(matrix: np.array) -> Tuple[int, int]:
                 break
             c -= 1
         if reflection:
-            return col + 1, 0
+            if (col + 1, 0) != to_ignore:
+                return col + 1, 0
     for row in range(matrix.shape[0] - 1):
         r = row
         reflection = True
@@ -42,7 +43,21 @@ def get_reflections(matrix: np.array) -> Tuple[int, int]:
                 break
             r -= 1
         if reflection:
-            return 0, row + 1
+            if (0, row + 1) != to_ignore:
+                return 0, row + 1
+    return 0, 0
+
+
+def get_modified_reflections(matrix: np.array) -> Tuple[int, int]:
+    reflections = get_reflections(matrix)
+    for col in range(matrix.shape[1]):
+        for row in range(matrix.shape[0]):
+            curr = matrix[row, col]
+            matrix[row, col] = 0 if curr == 1 else 1
+            new_reflections = get_reflections(matrix, reflections)
+            matrix[row, col] = curr
+            if new_reflections != (0, 0):
+                return new_reflections
     return 0, 0
 
 
@@ -57,7 +72,11 @@ def part1(input: List[str]) -> int:
 
 
 def part2(input: List[str]) -> int:
+    patterns = get_patterns(input)
     result = 0
+    for pattern in patterns:
+        h, v = get_modified_reflections(pattern)
+        result += h + 100 * v
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -98,4 +117,4 @@ def test_day13_part1(puzzle_input):
 
 
 def test_day13_part2(puzzle_input):
-    assert 1
+    assert part2(puzzle_input) == 400
