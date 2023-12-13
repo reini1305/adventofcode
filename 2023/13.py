@@ -18,7 +18,7 @@ def get_patterns(input: List[str]) -> List[np.array]:
     return output
 
 
-def get_reflections(matrix: np.array, to_ignore=(0, 0)) -> Tuple[int, int]:
+def get_reflections(matrix: np.ndarray, to_ignore=(0, 0)) -> Tuple[int, int]:
     for col in range(matrix.shape[1] - 1):
         c = col
         reflection = True
@@ -48,7 +48,7 @@ def get_reflections(matrix: np.array, to_ignore=(0, 0)) -> Tuple[int, int]:
     return 0, 0
 
 
-def get_modified_reflections(matrix: np.array) -> Tuple[int, int]:
+def get_modified_reflections(matrix: np.ndarray) -> Tuple[int, int]:
     reflections = get_reflections(matrix)
     for col in range(matrix.shape[1]):
         for row in range(matrix.shape[0]):
