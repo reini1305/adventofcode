@@ -4,7 +4,7 @@ from aoc import day, get_input
 import functools
 
 
-def parse_input(input: List[str]) -> List[Tuple[List[str], List[int]]]:
+def parse_input(input: List[str]) -> List[Tuple[List[int], List[int]]]:
     output = []
     to_int = {'.': 0, '#': 1, '?': 2}
     for line in input:
@@ -15,28 +15,26 @@ def parse_input(input: List[str]) -> List[Tuple[List[str], List[int]]]:
 
 
 @functools.cache  # 1000x+ speedup
-def arrangements(config, group):
+def arrangements(springs: Tuple[int], checksum: Tuple[int]) -> int:
 
     # Base cases
-    if (len(group) == 0):
-        a = int(sum(c == 1 for c in config) == 0)
-        return a
-    if sum(group) > len(config):
+    if (len(checksum) == 0):
+        return int(sum(c == 1 for c in springs) == 0)
+    if sum(checksum) > len(springs):
         return 0
 
     # One case for .
-    if config[0] == 0:
-        a = arrangements(config[1:], group)
-        return a
+    if springs[0] == 0:
+        return arrangements(springs[1:], checksum)
 
     no1, no2 = 0, 0
     # possibility to start next tile
-    if config[0] == 2:
-        no2 = arrangements(config[1:], group)
+    if springs[0] == 2:
+        no2 = arrangements(springs[1:], checksum)
 
     # possibility to start here
-    if all(c != 0 for c in config[:group[0]]) and (config[group[0]] if len(config) > group[0] else 0) != 1:
-        no1 = arrangements(config[(group[0] + 1):], group[1:])
+    if all(c != 0 for c in springs[:checksum[0]]) and (springs[checksum[0]] if len(springs) > checksum[0] else 0) != 1:
+        no1 = arrangements(springs[(checksum[0] + 1):], checksum[1:])
 
     return no1 + no2
 
