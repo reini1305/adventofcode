@@ -10,7 +10,7 @@ def parse_input(input: List[str]) -> List[List[str]]:
     return output
 
 
-def move_up(input: List[List[str]]) -> List[List[str]]:
+def move_up(input: List[List[str]]):
     move_happened = True
     while move_happened:
         move_happened = False
@@ -21,10 +21,9 @@ def move_up(input: List[List[str]]) -> List[List[str]]:
                         input[i][j] = '.'
                         input[i - 1][j] = 'O'
                         move_happened = True
-    return input
 
 
-def move_down(input: List[List[str]]) -> List[List[str]]:
+def move_down(input: List[List[str]]):
     move_happened = True
     while move_happened:
         move_happened = False
@@ -35,10 +34,9 @@ def move_down(input: List[List[str]]) -> List[List[str]]:
                         input[i][j] = '.'
                         input[i + 1][j] = 'O'
                         move_happened = True
-    return input
 
 
-def move_left(input: List[List[str]]) -> List[List[str]]:
+def move_left(input: List[List[str]]):
     move_happened = True
     while move_happened:
         move_happened = False
@@ -49,10 +47,9 @@ def move_left(input: List[List[str]]) -> List[List[str]]:
                         input[i][j] = '.'
                         input[i][j - 1] = 'O'
                         move_happened = True
-    return input
 
 
-def move_right(input: List[List[str]]) -> List[List[str]]:
+def move_right(input: List[List[str]]):
     move_happened = True
     while move_happened:
         move_happened = False
@@ -63,11 +60,13 @@ def move_right(input: List[List[str]]) -> List[List[str]]:
                         input[i][j] = '.'
                         input[i][j + 1] = 'O'
                         move_happened = True
-    return input
 
 
-def move_cycle(input: List[List[str]]) -> List[List[str]]:
-    return move_right(move_down(move_left(move_up(input))))
+def move_cycle(input: List[List[str]]):
+    move_up(input)
+    move_left(input)
+    move_down(input)
+    move_right(input)
 
 
 def count_load(input: List[List[str]]) -> int:
@@ -88,7 +87,9 @@ def hash_grid(input: List[List[str]]) -> str:
 
 
 def part1(input: List[str]) -> int:
-    result = count_load(move_up(parse_input(input)))
+    grid = parse_input(input)
+    move_up(grid)
+    result = count_load(grid)
     print(f'Day {day()}, Part 1: {result}')
     return result
 
@@ -100,7 +101,7 @@ def part2(input: List[str]) -> int:
     start = 0
     end = 0
     for iter in range(1000000000):
-        grid = move_cycle(grid)
+        move_cycle(grid)
         hash = hash_grid(grid)
         if hash in seen_grids:
             start = seen_grids[hash]
@@ -110,7 +111,7 @@ def part2(input: List[str]) -> int:
     # unroll loop
     todo = (1000000000 - start) % (end - start)
     for _ in range(todo - 1):
-        grid = move_cycle(grid)
+        move_cycle(grid)
     result = count_load(grid)
     print(f'Day {day()}, Part 2: {result}')
     return result
@@ -139,7 +140,8 @@ def puzzle_input():
 
 
 def test_day14_part1(puzzle_input):
-    grid = move_up(parse_input(puzzle_input))
+    grid = parse_input(puzzle_input)
+    move_up(grid)
     assert count_load(grid) == 136
 
 
