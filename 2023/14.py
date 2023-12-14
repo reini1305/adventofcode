@@ -1,6 +1,7 @@
 import pytest
 from typing import List
 from aoc import day, get_input
+from more_itertools import locate
 
 
 def parse_input(input: List[str]) -> List[List[str]]:
@@ -15,25 +16,23 @@ def move_up(input: List[List[str]]):
     while move_happened:
         move_happened = False
         for i in range(1, len(input)):
-            for j in range(len(input[i])):
-                if input[i][j] == 'O':
-                    if input[i - 1][j] == '.':
-                        input[i][j] = '.'
-                        input[i - 1][j] = 'O'
-                        move_happened = True
+            for j in locate(input[i], lambda x: x == 'O'):
+                if input[i - 1][j] == '.':
+                    input[i][j] = '.'
+                    input[i - 1][j] = 'O'
+                    move_happened = True
 
 
 def move_down(input: List[List[str]]):
     move_happened = True
     while move_happened:
         move_happened = False
-        for i in range(len(input) - 1):
-            for j in range(len(input[i])):
-                if input[i][j] == 'O':
-                    if input[i + 1][j] == '.':
-                        input[i][j] = '.'
-                        input[i + 1][j] = 'O'
-                        move_happened = True
+        for i in reversed(range(len(input) - 1)):
+            for j in locate(input[i], lambda x: x == 'O'):
+                if input[i + 1][j] == '.':
+                    input[i][j] = '.'
+                    input[i + 1][j] = 'O'
+                    move_happened = True
 
 
 def move_left(input: List[List[str]]):
@@ -41,12 +40,11 @@ def move_left(input: List[List[str]]):
     while move_happened:
         move_happened = False
         for i in range(len(input)):
-            for j in range(1, len(input[i])):
-                if input[i][j] == 'O':
-                    if input[i][j - 1] == '.':
-                        input[i][j] = '.'
-                        input[i][j - 1] = 'O'
-                        move_happened = True
+            for j in locate(input[i], lambda x: x == 'O'):
+                if j > 0 and input[i][j - 1] == '.':
+                    input[i][j] = '.'
+                    input[i][j - 1] = 'O'
+                    move_happened = True
 
 
 def move_right(input: List[List[str]]):
@@ -54,12 +52,11 @@ def move_right(input: List[List[str]]):
     while move_happened:
         move_happened = False
         for i in range(len(input)):
-            for j in range(len(input[i]) - 1):
-                if input[i][j] == 'O':
-                    if j < len(input[i]) and input[i][j + 1] == '.':
-                        input[i][j] = '.'
-                        input[i][j + 1] = 'O'
-                        move_happened = True
+            for j in reversed(list(locate(input[i][:-1], lambda x: x == 'O'))):
+                if input[i][j + 1] == '.':
+                    input[i][j] = '.'
+                    input[i][j + 1] = 'O'
+                    move_happened = True
 
 
 def move_cycle(input: List[List[str]]):
@@ -73,9 +70,8 @@ def count_load(input: List[List[str]]) -> int:
     result = 0
     lines = len(input)
     for i, line in enumerate(input):
-        for char in line:
-            if char == 'O':
-                result += lines - i
+        for _ in locate(line, lambda x: x == 'O'):
+            result += lines - i
     return result
 
 
