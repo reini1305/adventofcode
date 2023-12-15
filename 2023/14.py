@@ -1,5 +1,5 @@
 import pytest
-from typing import List
+from typing import Dict, List
 from aoc import day, get_input
 from more_itertools import locate
 
@@ -93,7 +93,7 @@ def part1(input: List[str]) -> int:
 def part2(input: List[str]) -> int:
     result = 0
     grid = parse_input(input)
-    seen_grids = {}
+    seen_grids: Dict[str, int] = {}
     start = 0
     end = 0
     for iter in range(1000000000):
