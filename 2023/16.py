@@ -1,6 +1,6 @@
 from collections import deque
 import pytest
-from typing import List, Set, Tuple
+from typing import Deque, List, Set, Tuple
 from aoc import day, get_input
 
 
@@ -19,7 +19,7 @@ def get_beam(grid: List[List[str]], start: Tuple[int, int, str]) -> Set[Tuple[in
                 '/': {'N': ['E'], 'S': ['W'], 'E': ['N'], 'W': ['S']},
                 '|': {'N': ['N'], 'S': ['S'], 'E': ['N', 'S'], 'W': ['N', 'S']},
                 '-': {'N': ['E', 'W'], 'S': ['E', 'W'], 'E': ['E'], 'W': ['W']}}
-    to_visit = deque()
+    to_visit: Deque[Tuple[int, int, str]] = deque()
     to_visit.append(start)
     while to_visit:
         current = to_visit.popleft()
