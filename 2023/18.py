@@ -1,5 +1,5 @@
 import pytest
-from typing import Dict, List, Set, Tuple
+from typing import List, Tuple
 from aoc import day, get_input, tuple_add
 
 
@@ -7,24 +7,26 @@ def parse_input(input: List[str]) -> List[Tuple[str, int, str]]:
     output = []
     for line in input:
         direction, amount, color = line.split()
-        output.append((direction, int(amount), color[1:-1]))
+        output.append((direction, int(amount), color[2:-1]))
     return output
 
 
-def get_path(instructions: List[Tuple[str, int, str]]) -> Dict[Tuple[int, int], str]:
-    path = {}
+def get_path(instructions: List[Tuple[str, int, str]], part2=False) -> List[Tuple[int, int]]:
+    path = []
     directions = {'L': (-1, 0), 'R': (1, 0), 'U': (0, -1), 'D': (0, 1)}
+    dir_mappings = 'RDLU'
     current = (0, 0)
     for direction, amount, color in instructions:
-        for _ in range(amount):
-            current = tuple_add(current, directions[direction])
-            path[current] = color
+        count = amount if not part2 else int(color[:-1], 16)
+        dir = direction if not part2 else dir_mappings[int(color[-1])]
+        for _ in range(count):
+            current = tuple_add(current, directions[dir])
+            path.append(current)
     return path
 
 
-def count_inside(path: Dict[Tuple[int, int], str]) -> int:
-    wpts = list(path.keys())
-    A = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(wpts, wpts[1:] + [wpts[0]]))
+def count_inside(path: List[Tuple[int, int]]) -> int:
+    A = sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(path, path[1:] + [path[0]]))
     return A // 2 + len(path) // 2 + 1
 
 
@@ -37,7 +39,9 @@ def part1(input: List[str]) -> int:
 
 
 def part2(input: List[str]) -> int:
-    result = 0
+    instruction = parse_input(input)
+    path = get_path(instruction, True)
+    result = count_inside(path)
     print(f'Day {day()}, Part 2: {result}')
     return result
 
