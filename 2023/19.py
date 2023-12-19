@@ -1,3 +1,6 @@
+from copy import deepcopy
+from functools import reduce
+import operator
 import pytest
 from typing import Dict, List, Tuple
 from aoc import day, get_input
@@ -20,7 +23,7 @@ def parse_input(input: List[str]) -> Tuple[Dict[str, List[Tuple[str, str]]], Lis
     return instructions, parts
 
 
-def run_instructions(instructions, parts):
+def run_instructions(instructions: Dict[str, List[Tuple[str, str]]], parts: List[List[int]]) -> List[int]:
     result = []
     for x, m, a, s in parts:
         state = 'in'
@@ -36,6 +39,41 @@ def run_instructions(instructions, parts):
     return result
 
 
+def pos(var: str) -> int:
+    return 'xmas'.index(var)
+
+
+def replace_range(pos, new_r, orig):
+    return [orig[i] if i != pos else new_r for i in range(4)]
+
+
+def search_space(instructions: Dict[str, List[Tuple[str, str]]], ranges: List[Tuple[int, int]], state: str) -> int:
+    if state == 'A':
+        return reduce(operator.mul, [(j - i) + 1 for i, j in ranges])
+    if state == 'R':
+        return 0
+    total = 0
+    new_ranges = deepcopy(ranges)
+    for ins in instructions[state]:
+        if len(ins) == 1:
+            total += search_space(instructions, new_ranges, ins[0])
+        else:
+            rule = ins[0]
+            ss = "<" if "<" in rule else ">"
+            var, val = rule.split(ss)
+            rp = pos(var)
+            rr = new_ranges[rp]
+            val = int(val)
+            if val >= rr[0] and val <= rr[1]:
+                if ss == ">":
+                    total += search_space(instructions, replace_range(rp, (val + 1, rr[1]), new_ranges), ins[1])
+                    new_ranges = replace_range(rp, (rr[0], val), new_ranges)
+                if ss == "<":
+                    total += search_space(instructions, replace_range(rp, (rr[0], val - 1), new_ranges), ins[1])
+                    new_ranges = replace_range(rp, (val, rr[1]), new_ranges)
+    return total
+
+
 def part1(input: List[str]) -> int:
     instructions, parts = parse_input(input)
     results = run_instructions(instructions, parts)
@@ -48,7 +86,8 @@ def part1(input: List[str]) -> int:
 
 
 def part2(input: List[str]) -> int:
-    result = 0
+    instructions, _ = parse_input(input)
+    result = search_space(instructions, [(1, 4_000), (1, 4_000), (1, 4_000), (1, 4_000)], 'in')
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -87,4 +126,4 @@ def test_day19_part1(puzzle_input):
 
 
 def test_day19_part2(puzzle_input):
-    assert 1
+    assert part2(puzzle_input) == 167409079868000
