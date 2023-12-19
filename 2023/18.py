@@ -20,7 +20,6 @@ def get_path(instructions: List[Tuple[str, int, str]], part2=False) -> Tuple[Lis
     for direction, amount, color in instructions:
         count = amount if not part2 else int(color[:-1], 16)
         dir = direction if not part2 else dir_mappings[int(color[-1])]
-        # for _ in range(count):
         current = tuple_add(current, tuple_mul(directions[dir], count))
         path.append(current)
         total_count += count

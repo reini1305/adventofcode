@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 from aoc import day, get_input
 
 
-def parse_input(input: List[str]) -> Tuple[Dict[str, List[Tuple[str, str]]], List[int]]:
+def parse_input(input: List[str]) -> Tuple[Dict[str, List[Tuple[str, str]]], List[List[int]]]:
     instructions = {}
     parts = []
     is_instructions = True
@@ -16,12 +16,33 @@ def parse_input(input: List[str]) -> Tuple[Dict[str, List[Tuple[str, str]]], Lis
             instruction = [tuple(i.split(':')) for i in rest[:-1].split(',')]
             instructions[name] = instruction
         else:
-            parts.append([i.split('=')[1] for i in line[1:-1].split(',')])
+            parts.append([int(i.split('=')[1]) for i in line[1:-1].split(',')])
     return instructions, parts
 
 
+def run_instructions(instructions, parts):
+    result = []
+    for x, m, a, s in parts:
+        state = 'in'
+        while state not in ['A', 'R']:
+            for ins in instructions[state]:
+                if len(ins) == 1:
+                    state = ins[0]
+                    break
+                if eval(ins[0]):
+                    state = ins[1]
+                    break
+        result.append(state)
+    return result
+
+
 def part1(input: List[str]) -> int:
+    instructions, parts = parse_input(input)
+    results = run_instructions(instructions, parts)
     result = 0
+    for i, r in enumerate(results):
+        if r == 'A':
+            result += sum(parts[i])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
@@ -62,7 +83,7 @@ def puzzle_input():
 
 
 def test_day19_part1(puzzle_input):
-    instructions, parts = parse_input(puzzle_input)
+    assert part1(puzzle_input) == 19114
 
 
 def test_day19_part2(puzzle_input):
