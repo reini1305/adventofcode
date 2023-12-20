@@ -61,13 +61,13 @@ def part1(input: List[str]) -> int:
 
 
 def part2(input: List[str]) -> int:
-    result = 0
     starter_node, and_nodes, flip_flop_nodes = parse_input(input)
     instructions = deque()
     loop = {}
+    found_all = False
     for iter in range(10000):
-        # Button press
-        result += 1
+        if found_all:
+            break
         for node in starter_node:
             instructions.append(('broadcaster', node, 0))
         while instructions:
@@ -80,6 +80,9 @@ def part2(input: List[str]) -> int:
                 if target == 'gf' and value:
                     if source not in loop:
                         loop[source] = iter + 1
+                        if len(loop) == len(and_nodes[target]['inputs']):
+                            found_all = True
+                            break
             elif target in flip_flop_nodes:
                 if value == 0:
                     flip_flop_nodes[target]['state'] = 1 if flip_flop_nodes[target]['state'] == 0 else 0
@@ -87,10 +90,9 @@ def part2(input: List[str]) -> int:
                         instructions.append((target, c, flip_flop_nodes[target]['state']))
             else:
                 pass
-    lcm = 1
+    result = 1
     for lo in loop.values():
-        lcm = lcm * lo // gcd(lcm, lo)
-    result = lcm
+        result = result * lo // gcd(result, lo)
     print(f'Day {day()}, Part 2: {result}')
     return result
 
