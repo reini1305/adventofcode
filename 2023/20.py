@@ -1,4 +1,5 @@
 from collections import deque
+from math import gcd
 import pytest
 from typing import List
 from aoc import day, get_input
@@ -41,7 +42,7 @@ def part1(input: List[str]) -> int:
         while instructions:
             source, target, value = instructions.popleft()
             if target in and_nodes:
-                and_nodes[target]['inputs'][source] = 1 if and_nodes[target]['inputs'][source] == 0 else 0
+                and_nodes[target]['inputs'][source] = value
                 output = 0 if all(i == 1 for i in and_nodes[target]['inputs'].values()) else 1
                 pulse_count[output] += len(and_nodes[target]['childs'])
                 for c in and_nodes[target]['childs']:
@@ -61,6 +62,35 @@ def part1(input: List[str]) -> int:
 
 def part2(input: List[str]) -> int:
     result = 0
+    starter_node, and_nodes, flip_flop_nodes = parse_input(input)
+    instructions = deque()
+    loop = {}
+    for iter in range(10000):
+        # Button press
+        result += 1
+        for node in starter_node:
+            instructions.append(('broadcaster', node, 0))
+        while instructions:
+            source, target, value = instructions.popleft()
+            if target in and_nodes:
+                and_nodes[target]['inputs'][source] = value
+                output = 0 if all(i == 1 for i in and_nodes[target]['inputs'].values()) else 1
+                for c in and_nodes[target]['childs']:
+                    instructions.append((target, c, output))
+                if target == 'gf' and value:
+                    if source not in loop:
+                        loop[source] = iter + 1
+            elif target in flip_flop_nodes:
+                if value == 0:
+                    flip_flop_nodes[target]['state'] = 1 if flip_flop_nodes[target]['state'] == 0 else 0
+                    for c in flip_flop_nodes[target]['childs']:
+                        instructions.append((target, c, flip_flop_nodes[target]['state']))
+            else:
+                pass
+    lcm = 1
+    for lo in loop.values():
+        lcm = lcm * lo // gcd(lcm, lo)
+    result = lcm
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -94,6 +124,7 @@ def test_day20_part1(puzzle_input):
         '%c -> inv',
         '&inv -> a'
     ]) == 32000000
+
 
 def test_day20_part2(puzzle_input):
     assert 1
