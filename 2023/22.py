@@ -52,23 +52,17 @@ def settle_bricks(bricks: List[Brick]):
         brick_moved = False
         for id in range(len(bricks)):
             new_brick = deepcopy(bricks[id])
-            movable = True
-            while movable:
+            while True:
                 # try moving it down by 1
                 if new_brick.on_ground():
-                    movable = False
-                    continue
+                    break
                 new_brick = new_brick.create_move_down()
                 if new_brick.intersects(grid - bricks[id].occupied):
-                    movable = False
                     break
-                if movable:
-                    for x, y, z in bricks[id].occupied:
-                        grid.remove((x, y, z))
-                    bricks[id] = new_brick
-                    for x, y, z in bricks[id].occupied:
-                        grid.add((x, y, z))
-                    brick_moved = True
+                grid -= (bricks[id].occupied - new_brick.occupied)
+                bricks[id] = new_brick
+                grid |= bricks[id].occupied
+                brick_moved = True
 
 
 def part1(bricks: List[Brick]) -> int:
