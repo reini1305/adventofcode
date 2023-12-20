@@ -65,6 +65,11 @@ def part2(input: List[str]) -> int:
     instructions = deque()
     loop = {}
     found_all = False
+    source_of_rx = ''
+    for node in and_nodes:
+        if 'rx' in and_nodes[node]['childs']:
+            source_of_rx = node
+            break
     for iter in range(10000):
         if found_all:
             break
@@ -77,7 +82,7 @@ def part2(input: List[str]) -> int:
                 output = 0 if all(i == 1 for i in and_nodes[target]['inputs'].values()) else 1
                 for c in and_nodes[target]['childs']:
                     instructions.append((target, c, output))
-                if target == 'gf' and value:
+                if target == source_of_rx and value:
                     if source not in loop:
                         loop[source] = iter + 1
                         if len(loop) == len(and_nodes[target]['inputs']):
