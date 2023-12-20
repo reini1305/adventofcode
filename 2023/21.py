@@ -25,13 +25,17 @@ def get_reachable(start, plots, max_steps):
                   'W': (-1, 0),
                   'E': (1, 0)}
     start_plots.append(start)
-    for _ in range(max_steps):
+    maxX, maxY = 0, 0
+    for x, y in plots:
+        maxX = max(x + 1, maxX)
+        maxY = max(y + 1, maxY)
+    for _ in range(1, max_steps + 1):
         reachable = set()
         while start_plots:
             current = start_plots.popleft()
             for d in directions:
                 new_step = tuple_add(current, directions[d])
-                if new_step in plots:
+                if (new_step[0] % maxX, new_step[1] % maxY) in plots:
                     reachable.add(new_step)
         start_plots = deque(reachable)
     return len(reachable)
@@ -45,6 +49,7 @@ def part1(input: List[str]) -> int:
 
 def part2(input: List[str]) -> int:
     # result = get_reachable(*parse_input(input), 26501365)
+    result = 0
     print(f'Day {day()}, Part 2: {result}')
     return result
 
