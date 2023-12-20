@@ -39,7 +39,7 @@ def get_bricks(input: List[str]) -> List[Brick]:
         s_x, s_y, s_z = [int(i) for i in start_str.split(',')]
         e_x, e_y, e_z = [int(i) for i in end_str.split(',')]
         bricks.append(Brick((s_x, s_y, s_z), (e_x, e_y, e_z)))
-    return bricks
+    return sorted(bricks, key=lambda x: min(z for _, _, z in x.occupied))
 
 
 def settle_bricks(bricks: List[Brick]):
