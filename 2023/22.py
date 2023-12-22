@@ -1,3 +1,4 @@
+from copy import deepcopy
 import pytest
 from typing import List, Tuple
 from aoc import day, get_input
@@ -12,8 +13,8 @@ class Brick:
     def supports(self, brick) -> bool:
         return False
 
-    def intersects(self, brick) -> bool:
-        return len(brick.occupied.intersection(self.occupied)) > 0
+    def intersects(self, grid) -> bool:
+        return len(grid.intersection(self.occupied)) > 0
 
     def on_ground(self) -> bool:
         return any(z == 1 for _, _, z in self.occupied)
@@ -41,27 +42,32 @@ def get_bricks(input: List[str]) -> List[Brick]:
 
 
 def settle_bricks(bricks):
+    grid = set()
+    for brick in bricks:
+        for x, y, z in brick.occupied:
+            grid.add((x, y, z))
     brick_moved = True
     while brick_moved:
         brick_moved = False
         for id in range(len(bricks)):
+            new_brick = deepcopy(bricks[id])
             movable = True
             while movable:
                 # try moving it down by 1
-                if bricks[id].on_ground():
+                if new_brick.on_ground():
                     movable = False
                     continue
-                new_brick = bricks[id].create_move_down()
-                for check_id in range(len(bricks)):
-                    if check_id == id:
-                        continue
-                    if new_brick.intersects(bricks[check_id]):
-                        movable = False
-                        break
-                if movable:
-                    bricks[id] = new_brick
-                    brick_moved = True
+                new_brick = new_brick.create_move_down()
+                if new_brick.intersects(grid - bricks[id].occupied):
+                    movable = False
                     break
+                if movable:
+                    for x, y, z in bricks[id].occupied:
+                        grid.remove((x, y, z))
+                    bricks[id] = new_brick
+                    for x, y, z in bricks[id].occupied:
+                        grid.add((x, y, z))
+                    brick_moved = True
 
 
 def part1(input: List[str]) -> int:
