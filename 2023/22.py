@@ -1,7 +1,7 @@
 from collections import defaultdict
 from copy import deepcopy
 import pytest
-from typing import DefaultDict, Dict, List, Tuple
+from typing import DefaultDict, List, Set
 from aoc import day, get_input
 
 
@@ -42,7 +42,7 @@ def get_bricks(input: List[str]) -> List[Brick]:
     return bricks
 
 
-def settle_bricks(bricks):
+def settle_bricks(bricks: List[Brick]):
     grid = set()
     for brick in bricks:
         for x, y, z in brick.occupied:
@@ -71,7 +71,7 @@ def settle_bricks(bricks):
                     brick_moved = True
 
 
-def part1(bricks) -> int:
+def part1(bricks: List[Brick]) -> int:
     result = 0
     supports: DefaultDict[int, List[int]] = defaultdict(list)
     supported_by: DefaultDict[int, List[int]] = defaultdict(list)
@@ -93,28 +93,24 @@ def part1(bricks) -> int:
     return result
 
 
-def part2(bricks) -> int:
+def part2(bricks: List[Brick]) -> int:
     result = 0
-    supports: DefaultDict[int, List[int]] = defaultdict(list)
-    supported_by: DefaultDict[int, List[int]] = defaultdict(list)
+    supported_by: DefaultDict[int, Set[int]] = defaultdict(set)
     for id, brick in enumerate(bricks):
         for other_id, other_brick in enumerate(bricks):
             if id == other_id:
                 continue
             if brick.supported_by(other_brick):
-                supports[other_id].append(id)
-                supported_by[id].append(other_id)
+                supported_by[id].add(other_id)
     for t in range(len(bricks)):
         collapsed = {t}
         collapsing = True
         while collapsing:
             collapsing = False
             for s in range(len(bricks)):
-                if s in collapsed:
+                if s in collapsed or not supported_by[s]:
                     continue
-                if len(supported_by[s]) == 0:
-                    continue
-                to_check = set(supported_by[s]) - collapsed
+                to_check = supported_by[s] - collapsed
                 if len(to_check) == 0:
                     collapsed.add(s)
                     collapsing = True
