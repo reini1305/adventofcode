@@ -1,6 +1,7 @@
+from collections import defaultdict
 from copy import deepcopy
 import pytest
-from typing import List, Tuple
+from typing import DefaultDict, Dict, List, Tuple
 from aoc import day, get_input
 
 
@@ -10,8 +11,8 @@ class Brick:
         self.end = end
         self._update_occupied()
 
-    def supports(self, brick) -> bool:
-        return False
+    def supported_by(self, brick) -> bool:
+        return self.create_move_down().intersects(brick.occupied)
 
     def intersects(self, grid) -> bool:
         return len(grid.intersection(self.occupied)) > 0
@@ -70,15 +71,29 @@ def settle_bricks(bricks):
                     brick_moved = True
 
 
-def part1(input: List[str]) -> int:
+def part1(bricks) -> int:
     result = 0
-    bricks = get_bricks(input)
-    settle_bricks(bricks)
+    supports: DefaultDict[int, List[int]] = defaultdict(list)
+    supported_by: DefaultDict[int, List[int]] = defaultdict(list)
+    for id, brick in enumerate(bricks):
+        for other_id, other_brick in enumerate(bricks):
+            if id == other_id:
+                continue
+            if brick.supported_by(other_brick):
+                supports[other_id].append(id)
+                supported_by[id].append(other_id)
+    # A brick can be removed if all of the bricks it supports are supported by another brick
+    for id in range(len(bricks)):
+        if not supports[id]:
+            result += 1
+            continue
+        if all(set(supported_by[s]) - {id} for s in supports[id]):
+            result += 1
     print(f'Day {day()}, Part 1: {result}')
     return result
 
 
-def part2(input: List[str]) -> int:
+def part2(bricks) -> int:
     result = 0
     print(f'Day {day()}, Part 2: {result}')
     return result
@@ -86,8 +101,10 @@ def part2(input: List[str]) -> int:
 
 if __name__ == "__main__":
     input = get_input()
-    part1(input)
-    part2(input)
+    bricks = get_bricks(input)
+    settle_bricks(bricks)
+    part1(bricks)
+    part2(bricks)
 
 
 @pytest.fixture
@@ -106,7 +123,7 @@ def puzzle_input():
 def test_day22_part1(puzzle_input):
     bricks = get_bricks(puzzle_input)
     settle_bricks(bricks)
-    print(bricks)
+    assert part1(bricks) == 5
 
 
 def test_day22_part2(puzzle_input):
