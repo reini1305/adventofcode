@@ -87,7 +87,7 @@ def part1(bricks) -> int:
         if not supports[id]:
             result += 1
             continue
-        if all(set(supported_by[s]) - {id} for s in supports[id]):
+        if all(len(supported_by[s]) != 1 for s in supports[id]):
             result += 1
     print(f'Day {day()}, Part 1: {result}')
     return result
@@ -95,6 +95,31 @@ def part1(bricks) -> int:
 
 def part2(bricks) -> int:
     result = 0
+    supports: DefaultDict[int, List[int]] = defaultdict(list)
+    supported_by: DefaultDict[int, List[int]] = defaultdict(list)
+    for id, brick in enumerate(bricks):
+        for other_id, other_brick in enumerate(bricks):
+            if id == other_id:
+                continue
+            if brick.supported_by(other_brick):
+                supports[other_id].append(id)
+                supported_by[id].append(other_id)
+    for t in range(len(bricks)):
+        collapsed = {t}
+        collapsing = True
+        while collapsing:
+            collapsing = False
+            for s in range(len(bricks)):
+                if s in collapsed:
+                    continue
+                if len(supported_by[s]) == 0:
+                    continue
+                to_check = set(supported_by[s]) - collapsed
+                if len(to_check) == 0:
+                    collapsed.add(s)
+                    collapsing = True
+        result += len(collapsed) - 1
+
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -127,4 +152,6 @@ def test_day22_part1(puzzle_input):
 
 
 def test_day22_part2(puzzle_input):
-    assert 1
+    bricks = get_bricks(puzzle_input)
+    settle_bricks(bricks)
+    assert part2(bricks) == 7
