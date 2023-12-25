@@ -1,3 +1,4 @@
+from collections import defaultdict
 from heapq import heappop, heappush
 import pytest
 from typing import List, Tuple
@@ -29,7 +30,7 @@ def get_longest_path(grid: List[List[str]], start: Tuple[int, int], end: Tuple[i
                           '<': ['N', 'S', 'E', 'W'],
                           '>': ['N', 'S', 'E', 'W']}
     visited = set()
-    to_visit = list()
+    to_visit: List[Tuple[int, int, int, int]] = list()
     heappush(to_visit, (0, *start, 'S'))
     width = len(grid[0])
     height = len(grid)
@@ -44,7 +45,7 @@ def get_longest_path(grid: List[List[str]], start: Tuple[int, int], end: Tuple[i
             nx, ny = tuple_add((x, y), directions[dir])
             if nx < 0 or ny < 0 or nx >= width or ny >= height or grid[ny][nx] == '#':
                 continue
-            heappush(to_visit, (cost - 1, nx, ny, dir))
+            heappush(to_visit, (cost - 1, nx, ny, 'S' if part2 else dir))
     return 0
 
 
@@ -55,7 +56,52 @@ def part1(input: List[str]) -> int:
 
 
 def part2(input: List[str]) -> int:
-    result = get_longest_path(*parse_input(input), True)
+    grid, start, target = parse_input(input)
+
+    # create graph where the nodes are the intersections of the grid
+    graph = defaultdict(list)
+    queue = [(start, start, {start, (0, 1)})] 
+    while queue:
+        curr_xy, prev_node, visited = queue.pop()
+        if curr_xy == target:
+            final_node = prev_node
+            final_steps = len(visited)-1
+            continue
+
+        (x, y) = curr_xy
+        neighbors = []
+        for i, j in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
+            if (i, j) not in visited and grid[j][i] != '#':
+                neighbors.append((i, j))
+
+        if len(neighbors) == 1:                                 # neither intersection nor dead end
+            nxt_xy = neighbors.pop()
+            queue.append((nxt_xy, prev_node, visited | {nxt_xy}))
+
+        elif len(neighbors) > 1:                                # found an intersection ( node)
+            steps = len(visited) - 1
+            if (curr_xy, steps) in graph[prev_node]:            # already been here
+                continue
+            graph[prev_node].append((curr_xy, steps))
+            graph[curr_xy].append((prev_node, steps))    
+            while neighbors:                                    # start new paths from current node
+                nxt_xy = neighbors.pop()
+                queue.append((nxt_xy, curr_xy, {curr_xy, nxt_xy}))
+
+    # traverse graph
+    max_steps = 0
+    queue = [(start, 0, {start})]
+    while queue:
+        curr, steps, visited = queue.pop()
+        if curr == final_node:
+            max_steps = max(steps, max_steps)
+            continue
+        for nxt, distance in graph[curr]:
+            if nxt not in visited:
+                queue.append((nxt, steps + distance, visited | {nxt}))
+
+    result = max_steps + final_steps - 1
+
     print(f'Day {day()}, Part 2: {result}')
     return result
 
