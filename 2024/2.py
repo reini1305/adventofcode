@@ -17,8 +17,6 @@ def checkSafe(report: List[int]) -> bool:
 
 
 def checkSafe2(report: List[int]) -> bool:
-    if checkSafe(report):
-        return True
     for i in range(len(report)):
         if checkSafe(report[:i] + report[i+1:]):
             return True
