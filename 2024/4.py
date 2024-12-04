@@ -1,59 +1,53 @@
 import pytest
 from typing import List
-from aoc import day, get_input
+from aoc import day, get_input, pad_array
 
 
 def countXmas(input: List[str], start_x: int, start_y: int) -> int:
     directions = [
-        [(1,0), (2,0), (3,0)],        # horizontal
-        [(-1,0), (-2,0), (-3,0)],     # horizontal
-        [(0,1), (0,2), (0,3)],        # vertical
-        [(0,-1), (0,-2), (0,-3)],     # vertical
-        [(1,1), (2,2), (3,3)],        # diagonal
-        [(-1,-1), (-2,-2), (-3,-3)],  # diagonal
-        [(1,-1), (2,-2), (3,-3)],     # diagonal
-        [(-1,1), (-2,2), (-3,3)],     # diagonal
+        [(1, 0), (2, 0), (3, 0)],        # horizontal
+        [(-1, 0), (-2, 0), (-3, 0)],     # horizontal
+        [(0, 1), (0, 2), (0, 3)],        # vertical
+        [(0, -1), (0, -2), (0, -3)],     # vertical
+        [(1, 1), (2, 2), (3, 3)],        # diagonal
+        [(-1, -1), (-2, -2), (-3, -3)],  # diagonal
+        [(1, -1), (2, -2), (3, -3)],     # diagonal
+        [(-1, 1), (-2, 2), (-3, 3)],     # diagonal
         ]
     text = "MAS"
     count = 0
     if input[start_y][start_x] == "X":
         for dir in directions:
-            try:
-                if all([input[start_y+d[1]][start_x+d[0]] == text[i] for i, d in enumerate(dir)]) and\
-                   all([start_y+d[1]>=0 and start_x+d[0]>=0 for d in dir]):
-                    count += 1
-            except IndexError:
-                pass
+            if all([input[start_y+d[1]][start_x+d[0]] == text[i] for i, d in enumerate(dir)]):
+                count += 1
     return count
 
 
 def countMas(input: List[str], start_x: int, start_y: int) -> int:
     directions = [
-        [(-1,1), (1,-1)],  # diagonal
-        [(-1,-1), (1,1)],  # diagonal
-        [(1,-1), (-1,1)],  # diagonal
-        [(1,1), (-1,-1)],  # diagonal
+        [(-1, 1), (1, -1)],  # diagonal
+        [(-1, -1), (1, 1)],  # diagonal
+        [(1, -1), (-1, 1)],  # diagonal
+        [(1, 1), (-1, -1)],  # diagonal
         ]
     text = "MS"
     count = 0
     if input[start_y][start_x] == "A":
         for dir in directions:
-            try:
-                if all([input[start_y+d[1]][start_x+d[0]] == text[i] for i, d in enumerate(dir)]) and\
-                   all([start_y+d[1]>=0 and start_x+d[0]>=0 for d in dir]):
-                    count += 1
-            except IndexError:
-                pass
+            if all([input[start_y+d[1]][start_x+d[0]] == text[i] for i, d in enumerate(dir)]):
+                count += 1
     return count == 2
 
 
 def part1(input: List[str]) -> int:
+    input = pad_array(input, '.', 3)
     result = sum([countXmas(input, x, y) for x in range(len(input[0])) for y in range(len(input))])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
 
 def part2(input: List[str]) -> int:
+    input = pad_array(input, '.', 1)
     result = sum([countMas(input, x, y) for x in range(len(input[0])) for y in range(len(input))])
     print(f'Day {day()}, Part 2: {result}')
     return result

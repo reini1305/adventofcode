@@ -25,3 +25,13 @@ def tuple_add(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
 
 def tuple_mul(a: Tuple[int, int], b: int) -> Tuple[int, int]:
     return (a[0] * b, a[1] * b)
+
+
+def pad_array(array: List[str], value: str, amount: int):
+    array_out: List[str] = []
+    for line in array:
+        array_out.append(value * amount + line + value * amount)
+    for _ in range(amount):
+        array_out.append(value * len(array_out[0]))
+        array_out.insert(0, value * len(array_out[0]))
+    return array_out
