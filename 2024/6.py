@@ -54,13 +54,13 @@ def part2(input: List[str]) -> int:
     sizex = len(input[0])
     sizey = len(input)
     result = 0
-    for x in range(sizex):
-        for y in range(sizey):
-            if (x, y) == guard:
-                continue
-            _, loop_detected = getVisitedNodes(guard, obstacles | {(x, y)}, sizex, sizey)
-            if loop_detected:
-                result += 1
+    nodes, _ = getVisitedNodes(guard, obstacles, sizex, sizey)
+    for x, y in nodes:
+        if (x, y) == guard:
+            continue
+        _, loop_detected = getVisitedNodes(guard, obstacles | {(x, y)}, sizex, sizey)
+        if loop_detected:
+            result += 1
     print(f'Day {day()}, Part 2: {result}')
     return result
 

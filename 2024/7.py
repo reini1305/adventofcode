@@ -21,6 +21,8 @@ def isSolvable(equation: Tuple[int, List[int]]) -> bool:
         result_is = inputs[0]
         for a, o in zip(inputs[1:], operator):
             result_is = o(result_is, a)
+            if result_is > result:
+                break
         if result_is == result:
             return True
 
@@ -38,6 +40,8 @@ def isSolvable2(equation: Tuple[int, List[int]]) -> bool:
         result_is = inputs[0]
         for a, o in zip(inputs[1:], operator):
             result_is = o(result_is, a)
+            if result_is > result:
+                break
         if result_is == result:
             return True
 
