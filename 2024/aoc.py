@@ -23,6 +23,10 @@ def tuple_add(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
     return (a[0] + b[0], a[1] + b[1])
 
 
+def tuple_diff(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
+    return (a[0] - b[0], a[1] - b[1])
+
+
 def tuple_mul(a: Tuple[int, int], b: int) -> Tuple[int, int]:
     return (a[0] * b, a[1] * b)
 

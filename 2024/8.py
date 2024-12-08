@@ -20,7 +20,11 @@ def getAntiNodes(antenna_1: Tuple[int, int], antenna_2: Tuple[int, int]) -> Tupl
     return tuple_diff(antenna_1, diff), tuple_add(antenna_2, diff)
 
 
-def getAntiNodesHarmonic(antenna_1: Tuple[int, int], antenna_2: Tuple[int, int], sizex: int, sizey: int) -> List[Tuple[int, int]]:
+def getAntiNodesHarmonic(
+        antenna_1: Tuple[int, int],
+        antenna_2: Tuple[int, int],
+        sizex: int,
+        sizey: int) -> List[Tuple[int, int]]:
     diff = tuple_diff(antenna_2, antenna_1)
     anti_nodes = [antenna_1, antenna_2]
     nx, ny = tuple_diff(antenna_1, diff)
