@@ -1,7 +1,6 @@
 import pytest
-from typing import List, Tuple
+from typing import Callable, List, Tuple
 from aoc import day, get_input
-from itertools import product
 from operator import add, mul
 
 
@@ -13,56 +12,42 @@ def parseInput(input: List[str]) -> List[Tuple[int, List[int]]]:
     return equations
 
 
-def isSolvable(equation: Tuple[int, List[int]]) -> bool:
-    result, inputs = equation
-    operators = product([add, mul], repeat=len(inputs) - 1)
+def isSolvable(equations: Tuple[int, List[int]], input_ops: List[Callable]) -> bool:
+    target, equation = equations
+    all_results = set()
+    all_results = {equation[0]}
 
-    for operator in operators:
-        result_is = inputs[0]
-        for a, o in zip(inputs[1:], operator):
-            result_is = o(result_is, a)
-            if result_is > result:
-                break
-        if result_is == result:
-            return True
+    for i in range(1, len(equation)):
+        possible_results = set()
+        for prev_result in all_results:
+            for op in input_ops:
+                result = op(prev_result, equation[i])
+                if result <= target:
+                    possible_results.add(result)
+        all_results = possible_results
 
-    return False
-
-
-def isSolvable2(equation: Tuple[int, List[int]]) -> bool:
-    result, inputs = equation
-
-    def concat(a, b):
-        return int(str(a) + str(b))
-    operators = product([add, mul, concat], repeat=len(inputs) - 1)
-
-    for operator in operators:
-        result_is = inputs[0]
-        for a, o in zip(inputs[1:], operator):
-            result_is = o(result_is, a)
-            if result_is > result:
-                break
-        if result_is == result:
-            return True
-
-    return False
+    return target in all_results
 
 
 def part1(input: List[str]) -> int:
     result = 0
     equations = parseInput(input)
     for equation in equations:
-        if isSolvable(equation):
+        if isSolvable(equation, [add, mul]):
             result += equation[0]
     print(f'Day {day()}, Part 1: {result}')
     return result
+
+
+def concat(a, b):
+    return int(f"{a}{b}")
 
 
 def part2(input: List[str]) -> int:
     result = 0
     equations = parseInput(input)
     for equation in equations:
-        if isSolvable2(equation):
+        if isSolvable(equation, [add, mul, concat]):
             result += equation[0]
     print(f'Day {day()}, Part 2: {result}')
     return result
