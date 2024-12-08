@@ -14,16 +14,15 @@ def parseInput(input: List[str]) -> List[Tuple[int, List[int]]]:
 
 def isSolvable(equations: Tuple[int, List[int]], input_ops: List[Callable]) -> bool:
     target, equation = equations
-    all_results = set()
-    all_results = {equation[0]}
+    all_results = [equation[0]]
 
     for i in range(1, len(equation)):
-        possible_results = set()
+        possible_results = []
         for prev_result in all_results:
             for op in input_ops:
                 result = op(prev_result, equation[i])
                 if result <= target:
-                    possible_results.add(result)
+                    possible_results.append(result)
         all_results = possible_results
 
     return target in all_results
