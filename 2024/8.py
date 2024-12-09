@@ -15,7 +15,9 @@ def getAntennas(input: List[str]) -> Dict[str, List[Tuple[int, int]]]:
     return antennas
 
 
-def getAntiNodes(antenna_1: Tuple[int, int], antenna_2: Tuple[int, int]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+def getAntiNodes(
+        antenna_1: Tuple[int, int],
+        antenna_2: Tuple[int, int]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     diff = tuple_diff(antenna_2, antenna_1)
     return tuple_diff(antenna_1, diff), tuple_add(antenna_2, diff)
 
