@@ -59,27 +59,6 @@ def defrag(blocks: List[int]) -> List[int]:
     return blocks
 
 
-def defragFiles(blocks: List[int],
-                files: Dict[int, Tuple[int, int]],
-                free: Dict[int, Tuple[int, int]]) -> List[int]:
-    for file in reversed(list(files.keys())):
-        pos, size = files[file]
-        # get first free space with size of file
-        next_free_id = 0
-        try:
-            while free[next_free_id][1] < size:
-                next_free_id += 1
-        except KeyError:
-            continue
-        pos_free, size_free = free[next_free_id]
-        for i in range(size):
-            blocks[pos_free + i] = file
-            blocks[pos + i] = -1
-        free[next_free_id] = (pos_free + size, size_free - size)
-
-    return blocks
-
-
 def part1(input: List[str]) -> int:
     result = 0
     blocks = defrag(getBlocks(input))
@@ -92,10 +71,24 @@ def part1(input: List[str]) -> int:
 
 def part2(input: List[str]) -> int:
     result = 0
-    blocks = defragFiles(getBlocks(input), *getFiles(input))
-    for i, file in enumerate(blocks):
-        if file != -1:
-            result += i * file
+    line = input[0]
+    blocks = [(None if i % 2 else i // 2, int(d)) for i, d in enumerate(line)]
+
+    for i in range(len(blocks) - 1, -1, -1):
+        for j in range(i):
+            i_data, i_size = blocks[i]
+            j_data, j_size = blocks[j]
+
+            if i_data is not None and j_data is None and i_size <= j_size:
+                blocks[i] = (None, i_size)
+                blocks[j] = (None, j_size - i_size)
+                blocks.insert(j, (i_data, i_size))
+
+    out = [[data if data else 0] * size for data, size in blocks]
+
+    def flatten(x):
+        return [x for x in x for x in x]
+    result = sum(i*c for i, c in enumerate(flatten(out)) if c)
     print(f'Day {day()}, Part 2: {result}')
     return result
 
