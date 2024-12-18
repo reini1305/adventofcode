@@ -7,7 +7,8 @@ from aoc import day, get_input, tuple_add
 def getGrid(input: List[str]) -> List[Tuple[int, int]]:
     output = []
     for line in input:
-        output.append(tuple(map(int, line.split(','))))
+        c = line.split(',')
+        output.append((int(c[0]), int(c[1])))
     return output
 
 
