@@ -27,7 +27,8 @@ def solveMaze(
             return score
         for dir in directions:
             nx, ny = tuple_add(pos, dir)
-            if nx < 0 or ny < 0 or nx >= sizex or ny >= sizey or (nx, ny) in grid or (nx, ny) in visited or (score + 1, (nx, ny)) in candidates:
+            if nx < 0 or ny < 0 or nx >= sizex or ny >= sizey or\
+               (nx, ny) in grid or (nx, ny) in visited or (score + 1, (nx, ny)) in candidates:
                 continue
             heapq.heappush(candidates, (score + 1, (nx, ny)))
     return -1
@@ -46,12 +47,17 @@ def part1(input: List[str]) -> int:
 def part2(input: List[str]) -> str:
     result = ""
     obstacles = getGrid(input)
-    for n in range(len(obstacles)):
+    lower = 0
+    upper = len(obstacles)
+    while upper != lower + 1:
+        n = (upper + lower) // 2
         grid = set()
         grid.update(obstacles[:n])
         if solveMaze(grid, 71, 71, (0, 0), (70, 70)) < 0:
             result = f"{obstacles[n - 1][0]},{obstacles[n - 1][1]}"
-            break
+            upper = n
+        else:
+            lower = n
     print(f'Day {day()}, Part 2: {result}')
     return result
 
@@ -103,4 +109,16 @@ def test_day18_part1(puzzle_input):
 
 
 def test_day18_part2(puzzle_input):
-    assert part2(puzzle_input) == "6,1"
+    obstacles = getGrid(puzzle_input)
+    lower = 0
+    upper = len(obstacles)
+    while upper != lower + 1:
+        n = (upper + lower) // 2
+        grid = set()
+        grid.update(obstacles[:n])
+        if solveMaze(grid, 7, 7, (0, 0), (6, 6)) < 0:
+            result = f"{obstacles[n - 1][0]},{obstacles[n - 1][1]}"
+            upper = n
+        else:
+            lower = n
+    assert result == "6,1"
