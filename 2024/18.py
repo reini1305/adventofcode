@@ -113,6 +113,7 @@ def test_day18_part2(puzzle_input):
     obstacles = getGrid(puzzle_input)
     lower = 0
     upper = len(obstacles)
+    result = ""
     while upper != lower + 1:
         n = (upper + lower) // 2
         grid = set()

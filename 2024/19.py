@@ -15,12 +15,13 @@ def countWaysToCreateDesign(design: str, towels: List[str]) -> int:
     count = [0] * (len(design) + 1)
     count[0] = 1
 
+    possible_towels = [t for t in towels if t in design]
     for i in range(len(design) + 1):
-        for towel in towels:
+        for towel in possible_towels:
             if i >= len(towel) and design[i - len(towel):i] == towel:
                 count[i] += count[i - len(towel)]
 
-    return count[len(design)]
+    return count[-1]
 
 
 def part1(input: List[str]) -> int:
