@@ -2,7 +2,7 @@ from itertools import combinations
 import pytest
 from typing import List, Set, Tuple
 from aoc import day, get_input
-import networkx as nx
+import networkx as nx  # type: ignore
 
 
 def getEdgesAndNodes(input: list[str]) -> Tuple[Set[Tuple[str, str]], Set[str]]:
