@@ -2,11 +2,17 @@ import pytest
 from typing import List, Tuple
 from aoc import day, get_input
 
+
 def nCrossZero(start: int, move: int) -> int:
-    n_rots = abs(move) // 100 # full rotations
-    move = move - n_rots * 100 if move > 0 else move + n_rots * 100 # remove those full rotations
-    n_rots += abs((start + move) // 100) if start > 0 else 0 # count crossing if we got past 0, but only if we didn't start at 0
-    n_rots += (start + move) == 0 # if we ended at zero we count it as crossing (here, not in the next iteration)
+    # full rotations
+    n_rots = abs(move) // 100
+    # remove those full rotations
+    move = move - n_rots * 100 if move > 0 else move + n_rots * 100
+    # count crossing if we got past 0, but only if we didn't start at 0
+    n_rots += abs((start + move) // 100) if start > 0 else 0
+    # if we ended at zero we count it as crossing (here, not in the next
+    # iteration)
+    n_rots += (start + move) == 0
     return n_rots
 
 
@@ -25,7 +31,7 @@ def turnDial(instructions: List[str]) -> Tuple[List[int], int]:
 
 def part1(input: List[str]) -> int:
     positions, _ = turnDial(input)
-    result = sum([1 if p==0 else 0 for p in positions])
+    result = sum([1 if p == 0 else 0 for p in positions])
     print(f'Day {day()}, Part 1: {result}')
     return result
 
