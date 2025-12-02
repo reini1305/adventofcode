@@ -1,4 +1,5 @@
 import pytest
+import re
 from typing import List
 from aoc import day, get_input
 
@@ -15,16 +16,8 @@ def findDuplicates(start: int, end: int) -> List[int]:
 def findNplicates(start: int, end: int) -> List[int]:
     nplicates: List[int] = []
     for num in range(start, end + 1):
-        string_num = str(num)
-        string_len = len(string_num)
-        for split in range(1, string_len // 2 + 1):
-            if string_len % split:
-                continue
-            num_chunks = string_len // split
-            chunks = [string_num[i * split:(i+1)*split] for i in range(num_chunks)]
-            if len(set(chunks)) == 1:
-                nplicates.append(num)
-                break
+        if re.match(r"^(\d+?)\1+$", str(num)):
+            nplicates.append(num)
     return nplicates
 
 
