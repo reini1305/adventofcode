@@ -1,22 +1,23 @@
 import pytest
 from collections import defaultdict
-from typing import List, DefaultDict
+from typing import List, Dict
 from aoc import day, get_input
 
 
-def getGrid(input: List[str]) -> DefaultDict[complex, str]:
-    grid: DefaultDict[complex, str] = defaultdict(lambda: ".")
+def getGrid(input: List[str]) -> Dict[complex, str]:
+    grid: Dict[complex, str] = {}
     for r, row in enumerate(input):
         for c, char in enumerate(row):
-            grid[r * 1j + c] = char
+            if char == "@":
+                grid[r * 1j + c] = char
     return grid
 
 
-def getNumNeighbors(grid: DefaultDict[complex, str], coordinate: complex) -> int:
+def getNumNeighbors(grid: Dict[complex, str], coordinate: complex) -> int:
     rolls = 0
     dirs = [1, -1, 1j, -1j, 1 + 1j, 1 - 1j, -1 + 1j, -1 - 1j]
     for d in dirs:
-        if grid[coordinate + d] == "@":
+        if coordinate + d in grid:
             rolls += 1
     return rolls
 
@@ -25,7 +26,7 @@ def part1(input: List[str]) -> int:
     result = 0
     grid = getGrid(input)
     for g in list(grid.keys()):
-        if grid[g] == "@" and getNumNeighbors(grid, g) < 4:
+        if getNumNeighbors(grid, g) < 4:
             result += 1
     print(f'Day {day()}, Part 1: {result}')
     return result
@@ -38,10 +39,10 @@ def part2(input: List[str]) -> int:
     while removed > 0:
         removed = 0
         for g in list(grid.keys()):
-            if grid[g] == "@" and getNumNeighbors(grid, g) < 4:
+            if getNumNeighbors(grid, g) < 4:
                 result += 1
                 removed += 1
-                grid[g] = "."
+                grid.pop(g)
     print(f'Day {day()}, Part 2: {result}')
     return result
 
