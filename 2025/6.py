@@ -10,7 +10,7 @@ def getEquations(input: List[str]) -> List[Tuple[List[int], str]]:
     for line in input:
         try:
             numbers.append([int(s) for s in line.split()])
-        except:
+        except ValueError:
             pass
     # last line is the operants
     operants = input[-1].split()

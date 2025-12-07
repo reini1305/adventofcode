@@ -1,5 +1,4 @@
 import pytest
-from collections import defaultdict
 from typing import List, Dict
 from aoc import day, get_input
 

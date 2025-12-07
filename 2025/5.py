@@ -18,7 +18,7 @@ def getIngredients(input: List[str]) -> List[int]:
     for line in input:
         try:
             ingredients.append(int(line))
-        except:
+        except ValueError:
             pass
     return ingredients
 
