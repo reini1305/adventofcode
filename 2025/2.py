@@ -52,12 +52,12 @@ def puzzle_input():
             "824824821-824824827,2121212118-2121212124"]
 
 
-def test_day2_part1(puzzle_input):
+def test_day2_part1(puzzle_input: List[str]):
     assert findDuplicates(11, 22) == [11, 22]
     assert part1(puzzle_input) == 1227775554
 
 
-def test_day2_part2(puzzle_input):
+def test_day2_part2(puzzle_input: List[str]):
     assert findNplicates(11, 22) == [11, 22]
     assert findNplicates(222220, 222224) == [222222]
     assert findNplicates(824824821, 824824827) == [824824824]

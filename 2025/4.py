@@ -68,9 +68,9 @@ def puzzle_input():
     ]
 
 
-def test_day4_part1(puzzle_input):
+def test_day4_part1(puzzle_input: List[str]):
     assert part1(puzzle_input) == 13
 
 
-def test_day4_part2(puzzle_input):
+def test_day4_part2(puzzle_input: List[str]):
     assert part2(puzzle_input) == 43

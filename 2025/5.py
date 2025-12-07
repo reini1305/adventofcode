@@ -14,7 +14,7 @@ def getRanges(input: List[str]) -> List[Tuple[int, int]]:
 
 
 def getIngredients(input: List[str]) -> List[int]:
-    ingredients = []
+    ingredients: List[int] = []
     for line in input:
         try:
             ingredients.append(int(line))
@@ -82,9 +82,9 @@ def puzzle_input():
     ]
 
 
-def test_day5_part1(puzzle_input):
+def test_day5_part1(puzzle_input: List[str]):
     assert part1(puzzle_input) == 3
 
 
-def test_day5_part2(puzzle_input):
+def test_day5_part2(puzzle_input: List[str]):
     assert part2(puzzle_input) == 14

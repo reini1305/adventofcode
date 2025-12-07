@@ -26,9 +26,9 @@ def puzzle_input():
     return True
 
 
-def test_dayx_part1(puzzle_input):
+def test_dayx_part1(puzzle_input: List[str]):
     assert part1(puzzle_input) == 0
 
 
-def test_dayx_part2(puzzle_input):
+def test_dayx_part2(puzzle_input: List[str]):
     assert part2(puzzle_input) == 0
