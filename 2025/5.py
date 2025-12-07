@@ -28,10 +28,8 @@ def mergeRanges(ranges: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
     sorted_ranges = sorted(ranges, key=lambda x: x[0])
     merged = [sorted_ranges[0]]
     for current in sorted_ranges:
-        previous = merged[-1]
-        if current[0] <= previous[1]:
-            previous = (previous[0], max(previous[1], current[1]))
-            merged[-1] = previous
+        if current[0] <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], current[1]))
         else:
             merged.append(current)
     return merged
